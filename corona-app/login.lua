@@ -8,8 +8,8 @@
 
 local storyboard = require( "storyboard" )
 local loginscene = storyboard.newScene()
-local passwordTxtBox
 local usernameTxtBox
+local passwordTxtBox
 
 -- Called when the scene's view does not exist:
 function loginscene:createScene( event )
@@ -17,7 +17,7 @@ function loginscene:createScene( event )
 	
 	-- add a username label and text box
 	local username = display.newText("Username",dcw*.1,dch*.05, native.systemFontBold, 16)
-	usernameTxtBox = native.newTextField(dcw*.1, dch*.1,dcw*.6, username.contentHeight+6 )
+	usernameTxtBox = native.newTextField(dcw*.1, dch*.1,dcw*.8, username.contentHeight+6 )
 	usernameTxtBox.font = native.newFont(native.systemFontBold, 16 )
 	usernameTxtBox.text = "user.name"
 	
@@ -26,22 +26,36 @@ function loginscene:createScene( event )
 	passwordTxtBox = native.newTextField(dcw*.1, dch*.25,dcw*.6, username.contentHeight+6 )
 	passwordTxtBox.font = native.newFont( native.systemFontBold, 16 )
 	passwordTxtBox.text = "s3cr3t"
+	passwordTxtBox.isSecure = true
 	
 	-- add a login button
 	local loginButton = widget.newButton({ width = 165, height = 50, label = "Login"})
 	loginButton.x = dcw*.5
 	loginButton.y = dch*.4
 	
-	-- finally add a status message text
-	local statusMsg = display.newText("Enter details and Login, or ...",0,0, native.systemFontBold, 16)
+	-- add a status message/instruction text
+	local statusMsg = display.newText("Enter your details to login",0,0, native.systemFontBold, 16)
 	statusMsg:setReferencePoint(display.CenterReferencePoint)
 	statusMsg.x = dcw*.5
 	statusMsg.y = dch*.5
 	
+	-- add a dividing line
+	local divLine1 = display.newLine(dcw*.1,dch*.6,dcw*.9,dch*.6)
+	divLine1:setColor(180)
+	local divLine2 = display.newLine(dcw*.1,dch*.6+2,dcw*.9,dch*.6+2)
+	divLine2:setColor(120)
+	
+	
+	-- add a register label
+	local registerLabel = display.newText("Don't have an account? Register!",0,0, native.systemFontBold, 16)
+	registerLabel:setReferencePoint(display.CenterReferencePoint)
+	registerLabel.x = dcw*.5
+	registerLabel.y = dch*.7
+	
 	-- add a register button
 	local registerButton = widget.newButton({ width = 165, height = 50, label = "Register"})
 	registerButton.x = dcw*.5
-	registerButton.y = dch*.75
+	registerButton.y = dch*.8
 	 
 	function handleLoginButtonEvent( event )
 		loginButton:setEnabled(false)
@@ -100,6 +114,9 @@ function loginscene:createScene( event )
 	group:insert(passwordTxtBox)
 	group:insert(loginButton)
 	group:insert(statusMsg)
+	group:insert(divLine1)
+	group:insert(divLine2)	
+	group:insert(registerLabel)	
 	group:insert(registerButton)
 
 end
