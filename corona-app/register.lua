@@ -51,9 +51,8 @@ function registerscene:createScene( event )
 	submitButton.x = dcw*.75
 	submitButton.y = dch*.9
 	
-	function handleSubmitButtonEvent( event )		 
-		submitButton:setEnabled(false)
-		submitButton.alpha = .5
+	function handleSubmitButtonEvent( event )	
+		showBusyWorking(true)
 	end
 	submitButton._view._onRelease = handleSubmitButtonEvent
 	

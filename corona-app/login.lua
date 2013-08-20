@@ -58,8 +58,7 @@ function loginscene:createScene( event )
 	registerButton.y = dch*.8
 	 
 	function handleLoginButtonEvent( event )
-		loginButton:setEnabled(false)
-		loginButton.alpha = .5
+		showBusyWorking(true)
 		-- now setup some tables for headers & json data    
 		local headers = {
 			["Content-Type"] = "application/json"
@@ -78,8 +77,7 @@ function loginscene:createScene( event )
 		-- this function handles when we get a response back from the http request
 		local function handleResponse(event)
 			if event.phase == "ended" then 
-				loginButton:setEnabled(true)
-				loginButton.alpha = 1
+				showBusyWorking(false)
 				if event.isError then
 			        statusMsg.text = "Network Unavailable"
 					return
