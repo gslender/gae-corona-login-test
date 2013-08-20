@@ -29,18 +29,18 @@ public class LoginServlet extends HttpServlet {
 		// ensure we set the response to JSON
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
-        LoginResponse lr = null;
+        WebServiceResponse wsr = null;
         
         // do some credential checks to see if it matches the username/password
 		if (cred.getUsername().equals("user.name") && cred.getPassword().equals("s3cr3t")) {
-			lr = new LoginResponse(LoginResponse.Status.OK, "Login success!");
+			wsr = new WebServiceResponse(WebServiceResponse.Status.OK, "Login success!");
 		}
 		else {
-			lr = new LoginResponse(LoginResponse.Status.ERROR, "Login fail!");
+			wsr = new WebServiceResponse(WebServiceResponse.Status.ERROR, "Login fail!");
 		}
 		
 		// finish by writing the object out as JSON
-        out.print(lr.toJson());
+        out.print(wsr.toJson());
 	}
 	
 }

@@ -85,10 +85,10 @@ function loginscene:createScene( event )
 				-- we got this far so the network is good, just check the webservice
 				if event.status == 200 then
 					-- decode the response into a table
-			        local loginResponse = json.decode(event.response)
-			        statusMsg.text = loginResponse.message
+			        local webServResp = json.decode(event.response)
+			        statusMsg.text = webServResp.message
 			        statusMsg:setTextColor(180, 0, 0)
-			        if loginResponse.status == "OK" then
+			        if webServResp.status == "OK" then
 			        	statusMsg:setTextColor(0, 180, 0)
 			        end
 			    else

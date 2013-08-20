@@ -7,7 +7,7 @@ import com.google.gson.Gson;
  * @author gslender
  *
  */
-public class LoginResponse {
+public class WebServiceResponse {
 
 	public enum Status {
 	
@@ -20,12 +20,12 @@ public class LoginResponse {
 	/**
 	 * LoginResponse default no-args constructor needed for Gson
 	 */
-	public LoginResponse()
+	public WebServiceResponse()
 	{
 		
 	}
 	
-	public LoginResponse(Status status, String message)
+	public WebServiceResponse(Status status, String message)
 	{
 	    this.status = status;
 	    this.message = message;
@@ -37,9 +37,9 @@ public class LoginResponse {
     	return json;
     }
 	
-    public static LoginResponse constructFromJson(String json)
+    public static WebServiceResponse constructFromJson(String json)
     {
     	Gson gson = new Gson();
-    	return gson.fromJson(json, LoginResponse.class);
+    	return gson.fromJson(json, WebServiceResponse.class);
     }
 }

@@ -52,7 +52,46 @@ function registerscene:createScene( event )
 	submitButton.y = dch*.9
 	
 	function handleSubmitButtonEvent( event )	
-		showBusyWorking(true)
+		showBusyWorking(true)		
+		-- now setup some tables for headers & json data    
+		local headers = {
+			["Content-Type"] = "application/json"
+		}
+		
+		local json_data = {
+			["fullname"] = nameTxtBox.text,
+			["password"] = password1TxtBox.text,
+			["email"] = emailTxtBox.text
+		}
+		
+		-- add to a params table
+		local params = {}
+		params.headers = headers
+		params.body = json.encode(json_data)
+		
+		-- this function handles when we get a response back from the http request
+		local function handleResponse(event)
+			if event.phase == "ended" then 
+				showBusyWorking(false)
+				if event.isError then
+			        statusMsg.text = "Network Unavailable"
+					return
+				end
+				-- we got this far so the network is good, just check the webservice
+				if event.status == 200 then
+					-- decode the response into a table
+			        local webServResp = json.decode(event.response)
+--			        statusMsg.text = webServResp.message
+--			        statusMsg:setTextColor(180, 0, 0)
+			        if webServResp.status == "OK" then
+			        	statusMsg:setTextColor(0, 180, 0)
+			        end
+			    else
+			        statusMsg.text = "WebService Unavailable"
+			    end
+		    end
+		end
+		network.request( GAE_URL.."register","POST",handleResponse,params)   
 	end
 	submitButton._view._onRelease = handleSubmitButtonEvent
 	
