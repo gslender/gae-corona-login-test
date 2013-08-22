@@ -3,6 +3,10 @@ package com.rednels.gaecorona;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
 
 import javax.servlet.http.*;
@@ -18,9 +22,10 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-
 @SuppressWarnings("serial")
 public class RegisterServlet extends HttpServlet {
+
+	public static String REGISTER_SECRET = "s3cr3t";
 	
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		// first thing is to get requests content
@@ -45,8 +50,11 @@ public class RegisterServlet extends HttpServlet {
         
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
+        
+        String link = getHostURLString(request) + "/register?activation="+toHashString(reg.getEmail()+REGISTER_SECRET);
+        System.out.println(link);
 
-        String plainBody = "...";
+        String plainBody = "Dear "+reg.getFullname()+", please confirm registration by following this link " + link;
     	String htmlBody = "<html>";        // ...
 
         try {
@@ -65,7 +73,9 @@ public class RegisterServlet extends HttpServlet {
             msg.setFrom(new InternetAddress("admin@example.com", "Example.com Admin"));            
             msg.setSubject("Your Example.com account has been activated");
             msg.setContent(mp);
-            Transport.send(msg);
+            
+            msg.writeTo(System.out);
+//            Transport.send(msg);
 
         } catch (AddressException e) {
             // ...
@@ -84,4 +94,47 @@ public class RegisterServlet extends HttpServlet {
 //        out.print(wsr.toJson());
 	}
 	
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		
+	}
+	
+	public String getHostURLString(HttpServletRequest request) {
+		int port = request.getServerPort();
+
+		if (request.getScheme().equals("http") && port == 80) {
+		    port = -1;
+		} else if (request.getScheme().equals("https") && port == 443) {
+		    port = -1;
+		}
+
+		try {
+			URL serverURL = new URL(request.getScheme(), request.getServerName(), port, "");
+			return serverURL.toString();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public String toHashString(String str)
+    { 
+        byte byteData[] = {};
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+	        md.update(str.getBytes());
+	        byteData = md.digest();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			return "token error";
+		} 
+ 
+        //convert the byte to hex format method 1
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < byteData.length; i++) {
+         sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+        }
+ 
+        return sb.toString();
+    }
 }
