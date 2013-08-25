@@ -81,8 +81,8 @@ function registerscene:createScene( event )
 				if event.status == 200 then
 					-- decode the response into a table
 			        local webServResp = json.decode(event.response)
---			        statusMsg.text = webServResp.message
---			        statusMsg:setTextColor(180, 0, 0)
+			        statusMsg.text = webServResp.message
+			        statusMsg:setTextColor(180, 0, 0)
 			        if webServResp.status == "OK" then
 			        	statusMsg:setTextColor(0, 180, 0)
 			        end

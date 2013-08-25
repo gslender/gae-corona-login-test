@@ -3,8 +3,18 @@ package com.rednels.gaecorona;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 
 import javax.servlet.http.*;
+
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery.TooManyResultsException;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 
 @SuppressWarnings("serial")
@@ -32,15 +42,28 @@ public class LoginServlet extends HttpServlet {
         WebServiceResponse wsr = null;
         
         // do some credential checks to see if it matches the username/password
-		if (cred.getUsername().equals("user.name") && cred.getPassword().equals("s3cr3t")) {
-			wsr = new WebServiceResponse(WebServiceResponse.Status.OK, "Login success!");
+		Filter usernameEqualFilter = new FilterPredicate("username",FilterOperator.EQUAL,cred.getUsername());
+        Query q = new Query("Users").setFilter(usernameEqualFilter);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		try {
+			Entity users = datastore.prepare(q).asSingleEntity();
+			
+			if (users != null) {
+				String password = (String) users.getProperty("password");
+
+				if (cred.getPassword().equals(password)) {
+					users.setProperty("lastlogin", new Date());
+					datastore.put(users);
+					wsr = new WebServiceResponse(WebServiceResponse.Status.OK, "Login Success!");
+					// finish by writing the object out as JSON
+			        out.print(wsr.toJson());
+			        return;
+				}				
+			}
+		} catch (TooManyResultsException e) {
 		}
-		else {
-			wsr = new WebServiceResponse(WebServiceResponse.Status.ERROR, "Login fail!");
-		}
-		
+		wsr = new WebServiceResponse(WebServiceResponse.Status.ERROR, "Login fail!");
 		// finish by writing the object out as JSON
-        out.print(wsr.toJson());
+        out.print(wsr.toJson());	
 	}
-	
 }
